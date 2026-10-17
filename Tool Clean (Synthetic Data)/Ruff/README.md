@@ -1,20 +1,38 @@
 # Ruff
 
-Boundary-version matrix for **Ruff**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.13 boundary variant -- measured.** A real Python 3.13 interpreter and this tool's own current release were both actually installed and invoked against this folder in the build environment; the result below is real, not asserted.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **Ruff**.
+
+Domain: a layered settings loader.
+
+## What a passing result looks like
+
+`ruff check` reports no diagnostics under a broad rule selection (pycodestyle, pyflakes, isort, pep8-naming, pyupgrade, bugbear, comprehensions, simplify, pydocstyle), and `ruff format --check` reports the files already formatted.
+
+## Command
+
+```bash
+ruff check src/ tests/ && ruff format --check src/ tests/
+```
+
+Expected: `All checks passed! / N files already formatted`
+
+## Layout
+
+```text
+tidyconf/
+  pyproject.toml      project root marker; zero dependencies
+  src/tidyconf/
+    __init__.py
+    layers.py
+    parse.py
+  tests/
+    test_tidyconf.py
+  ruff.toml
+```
+
+## Notes
+
+The selected rule set is written into `pyproject.toml` under `[tool.ruff.lint]`, so the result is reproducible rather than dependent on whatever Ruff's defaults are on the day. Passing Ruff's default four rules would prove very little.
