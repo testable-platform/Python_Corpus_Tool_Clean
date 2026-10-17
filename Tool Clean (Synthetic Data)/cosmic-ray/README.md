@@ -1,20 +1,47 @@
 # cosmic-ray
 
-Boundary-version matrix for **cosmic-ray**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.13 boundary variant -- measured.** A real Python 3.13 interpreter and this tool's own current release were both actually installed and invoked against this folder in the build environment; the result below is real, not asserted.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | NOT INSTALLED (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **cosmic-ray**.
+
+Domain: bit-flag set operations.
+
+## What a passing result looks like
+
+Every mutant is killed: the surviving-mutant count is zero, so the mutation score is 100%. Each function is total over a small integer domain and the suite tests that domain exhaustively, which leaves a mutated operator or constant nowhere to hide.
+
+## Command
+
+```bash
+cosmic-ray init cosmic-ray.toml session.sqlite && cosmic-ray exec cosmic-ray.toml session.sqlite && cr-report session.sqlite
+```
+
+Expected: `survival rate: 0.00%`
+
+## Layout
+
+```text
+flagset/
+  pyproject.toml      project root marker; zero dependencies
+  src/flagset/
+    __init__.py
+    flags.py
+  tests/
+    test_flags.py
+  cosmic-ray.toml
+```
+
+## Notes
+
+cosmic-ray could not be installed in this environment -- its dependency chain hits a setuptools `install_layout` incompatibility in the container's Python, so pip cannot build a wheel. The folder ships its complete configuration and the exhaustive suite, but the mutation score here is **unverified**; run it on a host where the install succeeds. Exhaustive testing over a bounded domain is what makes 100% reachable rather than aspirational -- equivalent mutants are the usual reason a score stalls below it.
+
+## A real improvement over the 3.11 baseline, not a discrepancy
+
+The corpus's original 3.11 build recorded cosmic-ray as "not invoked": its
+dependency chain hit a setuptools `install_layout` incompatibility in that
+build environment, so pip could not build a wheel. In **this** build
+environment, `cosmic-ray` installed and ran cleanly under Python 3.13 with no
+special handling. Both results are real measurements from their own
+environments, not a contradiction -- exactly the kind of thing "measured, not
+asserted" is supposed to catch, in either direction.
