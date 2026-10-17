@@ -1,20 +1,36 @@
 # CrossHair
 
-Boundary-version matrix for **CrossHair**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.11 boundary variant -- the corpus's original middle version.** Measured clean or documented not-installed exactly as recorded in this corpus's very first build; unchanged by the later boundary-version work.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **CrossHair**.
+
+Domain: closed integer intervals.
+
+## What a passing result looks like
+
+CrossHair finds no counterexample. Every function carries a docstring `pre:`/`post:` contract that holds for all inputs satisfying its precondition.
+
+## Command
+
+```bash
+crosshair check src/spanmath --per_condition_timeout=15
+```
+
+Expected: `(no output; exit 0)`
+
+## Layout
+
+```text
+spanmath/
+  pyproject.toml      project root marker; zero dependencies
+  src/spanmath/
+    __init__.py
+    span.py
+  tests/
+    test_span.py
+```
+
+## Notes
+
+Contracts are written as docstring `pre:` / `post:` lines rather than `assert`, so the same files stay clean under Bandit B101. Functions are total over their preconditions and use only integer arithmetic, which keeps CrossHair's solver inside a range it can decide.
