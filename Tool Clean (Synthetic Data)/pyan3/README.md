@@ -1,20 +1,37 @@
 # pyan3
 
-Boundary-version matrix for **pyan3**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.11 boundary variant -- the corpus's original middle version.** Measured clean or documented not-installed exactly as recorded in this corpus's very first build; unchanged by the later boundary-version work.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **pyan3**.
+
+Domain: a three-stage processing pipeline.
+
+## What a passing result looks like
+
+pyan3 builds the call graph without error and resolves every call to a defined node: the emitted graph has no unresolved reference and the stage-to-stage edges appear as written.
+
+## Command
+
+```bash
+pyan3 src/pipeflow/*.py --uses --defines --colored --grouped --dot --file graph.dot
+```
+
+Expected: `a DOT graph with defines and uses edges; exit 0`
+
+## Layout
+
+```text
+pipeflow/
+  pyproject.toml      project root marker; zero dependencies
+  src/pipeflow/
+    __init__.py
+    stages.py
+    pipeline.py
+  tests/
+    test_pipeflow.py
+```
+
+## Notes
+
+Call-graph tools resolve static call sites, so a pipeline assembled through a registry of callables or `getattr` dispatch produces a graph full of holes while the code runs perfectly. Stages here call one another by name. Verified flags: `--uses`, `--defines`, `--colored`, `--grouped`, `--dot`, `--file`.
