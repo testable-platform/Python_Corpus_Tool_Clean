@@ -1,20 +1,39 @@
 # testmon
 
-Boundary-version matrix for **testmon**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.14 boundary variant -- measured (interpreter pinned to 3.14.0rc2, matching this project's convention elsewhere).** A real Python 3.14 interpreter and this tool's own current release were both actually installed and invoked against this folder in the build environment; the result below is real, not asserted.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **testmon**.
+
+Domain: currency rounding and split.
+
+## What a passing result looks like
+
+`pytest --testmon` collects, builds its dependency database and runs every test green; a second run with nothing changed selects no tests and still exits 0.
+
+## Command
+
+```bash
+pytest --testmon -q && pytest --testmon -q
+```
+
+Expected: `all tests pass, then 'no tests ran' on the unchanged re-run`
+
+## Layout
+
+```text
+coinshift/
+  pyproject.toml      project root marker; zero dependencies
+  src/coinshift/
+    __init__.py
+    rounding.py
+    split.py
+  tests/
+    test_rounding.py
+    test_split.py
+  .gitignore
+```
+
+## Notes
+
+The second run is the actual assertion. A first green run only proves the suite passes; testmon's job is to notice that nothing changed, and an empty selection exiting 0 is the clean result. `.testmondata` is generated state, not corpus content, and is git-ignored.
