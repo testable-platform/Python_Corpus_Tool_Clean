@@ -1,20 +1,38 @@
 # cognitive-ast
 
-Boundary-version matrix for **cognitive-ast**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.6 boundary variant -- code-only.** No Python 3.6 interpreter exists in the available build environments (uv's python-build-standalone starts at 3.8), and most of this tool's current releases no longer install on an interpreter that old anyway. This source is verified, not asserted, to be valid here: `ast.parse(..., feature_version=(3,6))` passes, and this folder's own pytest suite runs unmodified and green under an available interpreter after the mechanical 3.6 downgrade (builtin generics -> typing.X, no stdlib `dataclasses`, no `from __future__ import annotations`). It was not run against the real tool listed below.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **cognitive-ast**.
+
+Domain: flat discount rules over an order total.
+
+## What a passing result looks like
+
+Every function scores 0-2 on cognitive complexity against a threshold of 15. Nesting never exceeds one level and no boolean operator sequence is mixed, so the increments that drive the score never accumulate.
+
+## Command
+
+```bash
+python -m driver
+```
+
+Expected: `max cognitive score 2 (threshold 15)`
+
+## Layout
+
+```text
+pricerule/
+  pyproject.toml      project root marker; zero dependencies
+  src/pricerule/
+    __init__.py
+    rules.py
+    apply.py
+  tests/
+    test_pricerule.py
+  driver.py
+```
+
+## Notes
+
+This folder was empty in the harvested set for a concrete reason: **there is no PyPI package named cognitive-ast**. The corpora implement it as a standard-library `ast` scorer, and `driver.py` here is that scorer -- Sonar's cognitive-complexity rules (nesting increment, boolean-sequence increment, no increment for an `else` chain) over the stdlib `ast` module. Synthetic data is the only way this folder can exist at all.
