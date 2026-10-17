@@ -1,20 +1,40 @@
 # jscpd
 
-Boundary-version matrix for **jscpd**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.11 boundary variant -- the corpus's original middle version.** Measured clean or documented not-installed exactly as recorded in this corpus's very first build; unchanged by the later boundary-version work.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **jscpd**.
+
+Domain: three unrelated unit converters.
+
+## What a passing result looks like
+
+Zero clones. jscpd finds no duplicated block at its default threshold, and none at the much tighter settings used here (5 lines / 30 tokens), because the three converter modules share no structure: one is a lookup table, one is a ratio chain, one is a parser.
+
+## Command
+
+```bash
+jscpd src/ --min-lines 5 --min-tokens 30 --threshold 0 --reporters console
+```
+
+Expected: `Found 0 clones`
+
+## Layout
+
+```text
+unitcast/
+  pyproject.toml      project root marker; zero dependencies
+  src/unitcast/
+    __init__.py
+    lookup.py
+    ratio.py
+    parser.py
+  tests/
+    test_lookup.py
+    test_ratio.py
+    test_parser.py
+```
+
+## Notes
+
+The natural way to write three converters is one shape repeated three times, which is exactly a clone group. Each module here is deliberately a different shape. Note `--threshold 0`: jscpd's threshold is a **failure budget**, not a detection floor, so 0 means any clone at all fails the run.
