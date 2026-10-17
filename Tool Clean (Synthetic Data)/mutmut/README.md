@@ -1,20 +1,38 @@
 # mutmut
 
-Boundary-version matrix for **mutmut**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.11 boundary variant -- the corpus's original middle version.** Measured clean or documented not-installed exactly as recorded in this corpus's very first build; unchanged by the later boundary-version work.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **mutmut**.
+
+Domain: rounding helpers over a small integer domain.
+
+## What a passing result looks like
+
+No mutant survives. Every helper is total over a bounded integer domain and the suite asserts an explicit expected value for every point in that domain, so any mutated constant or operator changes an asserted result.
+
+## Command
+
+```bash
+mutmut run && mutmut results
+```
+
+Expected: `no surviving mutants`
+
+## Layout
+
+```text
+roundkit/
+  pyproject.toml      project root marker; zero dependencies
+  src/roundkit/
+    __init__.py
+    nearest.py
+    buckets.py
+  tests/
+    test_roundkit.py
+  setup.cfg
+```
+
+## Notes
+
+`setup.cfg` carries `[mutmut] source_paths` because **mutmut 3.x reads its configuration from setup.cfg and ignores pyproject.toml** -- without it mutmut exits with `Could not figure out where the code to mutate is`, which reads like a corpus defect and is not one. The expected values are written out as a literal table rather than computed by a reference implementation, so a mutant cannot corrupt the oracle and the test at the same time.
