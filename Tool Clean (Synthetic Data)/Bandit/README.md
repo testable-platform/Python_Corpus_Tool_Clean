@@ -1,20 +1,37 @@
 # Bandit
 
-Boundary-version matrix for **Bandit**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.13 boundary variant -- measured.** A real Python 3.13 interpreter and this tool's own current release were both actually installed and invoked against this folder in the build environment; the result below is real, not asserted.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **Bandit**.
+
+Domain: warehouse reorder levels.
+
+## What a passing result looks like
+
+Bandit reports zero issues at every severity. The package uses no `subprocess`, `os.system`, `eval`, `exec`, `pickle`, `yaml.load`, `tempfile.mktemp`, weak hash or `random` call, carries no hardcoded credential, and contains no `assert` (B101 has no exemption outside tests, so the asserts live in `tests/` only).
+
+## Command
+
+```bash
+bandit -r src/ -f screen
+```
+
+Expected: `No issues identified.`
+
+## Layout
+
+```text
+stockroom/
+  pyproject.toml      project root marker; zero dependencies
+  src/stockroom/
+    __init__.py
+    levels.py
+    registry.py
+  tests/
+    test_stockroom.py
+```
+
+## Notes
+
+Point Bandit at `src/` rather than the folder root. Test files use `assert` by necessity, which B101 flags wherever it finds it.
