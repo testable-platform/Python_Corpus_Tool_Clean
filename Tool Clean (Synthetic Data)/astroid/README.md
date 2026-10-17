@@ -1,20 +1,38 @@
 # astroid
 
-Boundary-version matrix for **astroid**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.7 boundary variant -- code-only.** No Python 3.7 interpreter exists in the available build environments (uv's python-build-standalone starts at 3.8). This source is verified, not asserted, to be valid here: `ast.parse(..., feature_version=(3,7))` passes, and this folder's own pytest suite runs unmodified and green under an available interpreter after downgrading builtin generic subscripting (`list[int]` etc., which needs 3.9+) to `typing.List`/`typing.Dict`/etc. It was not run against the real tool listed below.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **astroid**.
+
+Domain: a registry of plane shapes.
+
+## What a passing result looks like
+
+astroid infers every name: no node resolves to `Uninferable`. There is no `exec`, no star import, no metaclass, no runtime attribute injection, no `globals()` mutation and no dynamic base class, so inference has a single answer everywhere.
+
+## Command
+
+```bash
+python -m driver
+```
+
+Expected: `0 unresolved names`
+
+## Layout
+
+```text
+shapebook/
+  pyproject.toml      project root marker; zero dependencies
+  src/shapebook/
+    __init__.py
+    shapes.py
+    registry.py
+  tests/
+    test_shapebook.py
+  driver.py
+```
+
+## Notes
+
+astroid is a library, so `driver.py` drives the check. It asks whether every identifier resolves to a definition, not whether every expression infers to a value -- a first draft asked the second question and reported 8 failures in correct code, because a `dataclass(frozen=True)` decorator call and a generator expression's loop variable both infer to Uninferable quite legitimately. A check that fires on healthy code is a defect wearing a safety label. This is the axis the corpora found astroid sits on: the 3.x-to-4.x change moved `infer_call_result(caller)` to positional and deprecated the root node re-exports, so `driver.py` imports from `astroid.nodes`.
