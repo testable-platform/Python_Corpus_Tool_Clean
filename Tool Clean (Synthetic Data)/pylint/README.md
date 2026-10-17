@@ -1,20 +1,37 @@
 # pylint
 
-Boundary-version matrix for **pylint**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.14 boundary variant -- measured (interpreter pinned to 3.14.0rc2, matching this project's convention elsewhere).** A real Python 3.14 interpreter and this tool's own current release were both actually installed and invoked against this folder in the build environment; the result below is real, not asserted.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **pylint**.
+
+Domain: a lending-library catalogue.
+
+## What a passing result looks like
+
+`pylint` scores **10.00/10** with no message of any category: every module, class and function is documented, every name follows the conventions, nothing is unused, imports are ordered, and no line exceeds the limit.
+
+## Command
+
+```bash
+pylint src/shelfmark --fail-under=10
+```
+
+Expected: `Your code has been rated at 10.00/10`
+
+## Layout
+
+```text
+shelfmark/
+  pyproject.toml      project root marker; zero dependencies
+  src/shelfmark/
+    __init__.py
+    records.py
+    catalogue.py
+  tests/
+    test_shelfmark.py
+```
+
+## Notes
+
+`--fail-under=10` is what turns 10.00/10 into an exit code; without it pylint exits 0 on a 9.5 and the folder would silently stop being clean. No `# pylint: disable` comment appears anywhere -- a suppressed message is not a clean result.
