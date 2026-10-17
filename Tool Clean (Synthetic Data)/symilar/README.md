@@ -1,20 +1,39 @@
 # symilar
 
-Boundary-version matrix for **symilar**: 2 earliest supported versions, 1
-middle, 2 end/latest -- the team's stated methodology for this corpus's
-version coverage. Each `py3.X/` subfolder is a complete, independent project;
-see its own README for what "clean" means for this tool and the exact
-command.
+**py3.11 boundary variant -- the corpus's original middle version.** Measured clean or documented not-installed exactly as recorded in this corpus's very first build; unchanged by the later boundary-version work.
 
-| Version | Status |
-|---|---|
-| py3.6 | CODE-ONLY (not run against a live interpreter) |
-| py3.7 | CODE-ONLY (not run against a live interpreter) |
-| py3.11 | MEASURED CLEAN (unchanged from the corpus's original 3.11 build) |
-| py3.13 | MEASURED CLEAN |
-| py3.14 | MEASURED CLEAN |
 
-3.6 and 3.7 are code-only (see their own READMEs for what that means and how
-they were still verified). 3.11 is this corpus's original single-version
-build, unchanged. 3.13 and 3.14 were both measured for real, in the same
-build environment, following the same standard as the original 3.11 build.
+Synthetic, clean-by-design Python project for **symilar**.
+
+Domain: four field validators, each structurally distinct.
+
+## What a passing result looks like
+
+symilar reports no similar lines. At a threshold of 4 lines -- tighter than the default -- no two modules share a comparable block, because each validator uses a different construct: a regex, a checksum loop, a set membership test and a range comparison.
+
+## Command
+
+```bash
+symilar --duplicates=4 --ignore-comments --ignore-docstrings src/checkfour/*.py
+```
+
+Expected: `TOTAL lines=... duplicates=0 percent=0.00`
+
+## Layout
+
+```text
+checkfour/
+  pyproject.toml      project root marker; zero dependencies
+  src/checkfour/
+    __init__.py
+    postcode.py
+    checksum.py
+    membership.py
+    bounds.py
+  tests/
+    test_checkfour.py
+```
+
+## Notes
+
+Four validators are the classic place a clone group forms: the same guard-clause-then-return shape, copied. The temptation is worth resisting on purpose here. Because symilar is what pylint ships as its duplicate detector, this folder and the jscpd folder are separate -- the same two tools pointed at one directory is a single measurement, not a cross-check.
